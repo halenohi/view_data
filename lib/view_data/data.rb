@@ -7,6 +7,8 @@ module ViewData
           
         when ViewData::Template
           
+        when NilClass
+          ViewData::NullData.new
         end
       end
     end
@@ -16,7 +18,7 @@ module ViewData
     end
 
     def to_assigns
-      { hoge: }
+      { hoge: 'hoge' }
     end
   end
 end

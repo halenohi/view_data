@@ -6,12 +6,12 @@ module ViewData
 
     # ex: "application"
     def layout
-      @layout ||= @options[:layout].call.identifier.split('/').last
+      @layout ||= ViewData::Layout.new(@options[:layout].call.identifier.split('/').last)
     end
 
     # ex: "posts/index"
     def template
-      @template = _template(exist_prefixes.first) if exist_prefixes.any?
+      @template ||= ViewData::Template.new(_template(exist_prefixes.first)) if exist_prefixes.any?
     end
 
     def exist_prefixes
