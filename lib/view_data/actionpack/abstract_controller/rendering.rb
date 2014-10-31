@@ -1,9 +1,16 @@
 module AbstractController
   module Rendering
+    def view_data_render(*args, &block)
+      options = _normalize_render(*args, &block)
+      @_render_options = ViewData::RenderOptions.new(options)
+      original_render(*args, &block)
+    end
+
+    alias original_render render
+    alias render view_data_render
+
     def inject_view_assigns
-      original_view_data = original_view_assigns
-      injected_view_data = original_view_data.dup
-      injected_view_data
+      ViewData::Injecter.inject(@_render_options, original_view_assigns)
     end
 
     alias original_view_assigns view_assigns
