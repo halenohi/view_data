@@ -1,7 +1,9 @@
 source "https://rubygems.org"
 
 group :development, :test do
+  gem 'sqlite3'
   gem 'rspec-rails'
+  gem 'quiet_assets'
 end
 
 # Declare your gem's dependencies in view_data.gemspec.
