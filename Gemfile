@@ -4,6 +4,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'rspec-rails'
   gem 'quiet_assets'
+  gem 'tapp'
 end
 
 # Declare your gem's dependencies in view_data.gemspec.
