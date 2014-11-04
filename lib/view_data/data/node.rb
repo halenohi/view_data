@@ -15,6 +15,10 @@ module ViewData::Data::Node
     def add_node(node, *children)
       node.send(STRUCT_NAME)[:nodes] += children
     end
+
+    def get_nodes(node)
+      node.send(STRUCT_NAME)[:nodes]
+    end
   end
 
   module Delegate
