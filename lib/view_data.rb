@@ -1,6 +1,7 @@
 require 'rails'
 
 require 'view_data/data'
+require 'view_data/data/node'
 require 'view_data/dsl'
 require 'view_data/dsl/context'
 require 'view_data/dsl/sequences'
