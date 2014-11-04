@@ -99,10 +99,61 @@ ViewData.configure do
 end
 ```
 __view_data/layouts/application.rb__
+```
 ViewData.define do
   data :categories do
     cache expires_in: 1.hour do
       Category.arrange
     end
   end
-nd
+end
+```
+
+```
+DataNode
+{
+  args: [],
+  name: :posts,
+  value: [
+    {
+      args: [],
+      name: :post,
+      value: nil,
+      nodes: [
+        {
+          args: [],
+          name: :title,
+          value: 'sample title',
+          nodes: []
+        },
+        {
+          args: [],
+          name: :image,
+          value: nil,
+          nodes: [
+            {
+              args: [],
+              name: :url,
+              value: 'http://sample.com/example-default.jpg',
+              nodes: []
+            },
+            {
+              args: [:thumb],
+              name: :url,
+              value: 'http://sample.com/example-thumb.jpg',
+              nodes: []
+            },
+            {
+              args: [],
+              name: :file,
+              value: '/hoge/fuga.jpg',
+              nodes: []
+            }
+          ]
+        },
+      ]
+    }
+  ]
+  nodes: []
+}
+```
