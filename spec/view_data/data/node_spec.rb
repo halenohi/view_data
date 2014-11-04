@@ -2,32 +2,19 @@ require 'spec_helper'
 
 describe ViewData::Data::Node do
   let(:base) do
-    'sample string'.tap do |b|
-      b.extend(ViewData::Data::Node)
-      b.__view_data_struct = {
-        nodes: [child, child2]
-      }
-    end
+    ViewData::Data::Node.create_node('sample string', :base, [])
   end
 
   let(:child) do
-    'sample child'.tap do |c|
-      c.extend(ViewData::Data::Node)
-      c.__view_data_struct = {
-        args: [],
-        name: :test_method
-      }
-    end
+    ViewData::Data::Node.create_node('sample child', :test_method, [])
   end
 
   let(:child2) do
-    'sample child 2'.tap do |c|
-      c.extend(ViewData::Data::Node)
-      c.__view_data_struct = {
-        args: [:hoge],
-        name: :test_method
-      }
-    end
+    ViewData::Data::Node.create_node('sample child 2', :test_method, [:hoge])
+  end
+
+  before do
+    ViewData::Data::Node.add_node(base, child, child2)
   end
 
   it 'add method missing to value' do
