@@ -1,4 +1,6 @@
 require 'rails'
+require 'view_data/engine'
+require 'view_data/rails/railtie'
 
 require 'view_data/data'
 require 'view_data/data/node'
@@ -9,13 +11,10 @@ require 'view_data/dsl/context'
 require 'view_data/dsl/inside_context'
 require 'view_data/dsl/sequences'
 
-require 'view_data/engine'
-
 require 'view_data/file'
 require 'view_data/layout'
 require 'view_data/render_options'
 require 'view_data/template'
-require 'view_data/rails/railtie'
 
 module ViewData
   class << self
