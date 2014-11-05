@@ -5,43 +5,62 @@ describe ViewData::DSL do
     ViewData::DSL.new
   end
 
-  let(:context_class) do
-    double 'ViewData::DSL::Context'
-  end
-
-  let(:context_instance) do
-    double 'ViewData::DSL::Context instance'
-  end
-
-  before do
-    allow(context_class).to receive(:new).and_return(context_instance)
-    stub_const('ViewData::DSL::Context', context_class)
-  end
-
   describe '#data' do
-    context 'without block' do
-      before do
-        dsl.data(:post)
+    before do
+      dsl.data :post
+    end
+
+    it 'append data_node to data_nodes' do
+      expect(dsl.data_nodes.keys).to eq(['view_data/dsl:post'])
+    end
+  end
+
+  describe '#collection' do
+    before do
+      dsl.data_nodes['posts/post:post'] = 'sample post'
+    end
+
+    subject do
+      dsl.collection name
+    end
+
+    context 'name is only :post' do
+      let(:name) do
+        :post
       end
 
-      subject do
-        dsl.contexts
-      end
-
-      it 'define new ViewData::DSL::Context to contexts' do
-        expect(subject).to eq(post: context_instance)
+      it 'lookup data_node' do
+        expect(subject).to eq(['sample post'])
       end
     end
 
-    context 'with block' do
-      before do
-        expect(context_instance).to receive(:instance_eval)
+    context 'name is include slash' do
+      let(:name) do
+        'posts/post'
       end
 
-      it 'assigns context\'s instance_eval return value to context' do
-        dsl.data(:post) do
-          title 'sample title'
-        end
+      it 'lookup data_node' do
+        expect(subject).to eq(['sample post'])
+      end
+    end
+
+    context 'name is include slash and collon' do
+      let(:name) do
+        'posts/post:post'
+      end
+
+      it 'lookup data_node' do
+        expect(subject).to eq(['sample post'])
+      end
+    end
+
+    context 'passing length: 3' do
+      subject do
+        dsl.collection :post, length: 3
+      end
+
+      it 'return 3 length result' do
+        expect(subject).to eq(['sample post', 'sample post', 'sample post'])
       end
     end
   end

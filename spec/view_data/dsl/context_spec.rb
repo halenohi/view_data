@@ -5,20 +5,24 @@ describe ViewData::DSL::Context do
     ViewData::Data::Node.new(value: nil, name: :data_node)
   end
 
-  let(:data_node_2) do
-    ViewData::Data::Node.new(value: nil, name: :data_node_2)
+  let(:dsl) do
+    ViewData::DSL.new
   end
 
   let(:context) do
-    ViewData::DSL::Context.new(:sample_1, data_node)
+    ViewData::DSL::Context.new(:sample_1, data_node, dsl)
   end
 
-  let(:context_2) do
-    ViewData::DSL::Context.new(:sample_2, data_node_2)
+  let(:comment_node) do
+    ViewData::Data::Node.new(value: nil, name: :comment_node)
   end
 
   let(:now) do
     Time.now
+  end
+
+  before do
+    dsl.data_nodes['comments/comment:comment'] = comment_node
   end
 
   describe 'define post data' do
@@ -37,6 +41,12 @@ describe ViewData::DSL::Context do
       context.image.url(:thumb) { image.url.sub(/default/, 'thumb') }
 
       context.attr name: :extract, args: [:hoge], value: 'sample extract'
+
+      context.comments do
+        collection :comment, length: 2
+      end
+
+      context.collection :comment
     end
 
     subject do
@@ -47,23 +57,20 @@ describe ViewData::DSL::Context do
       expect(subject.id.to_value).to eq(1)
       expect(subject.title.to_value).to eq('sample title')
       expect(subject.body.to_value).to eq('sample body')
+
       expect(subject.created_at.to_value).to eq(now)
       expect(subject.updated_at.to_value).to eq(now)
       expect(subject.published_at.to_value).to eq(now + 1.day)
+
       expect(subject.image.to_value).to eq(nil)
       expect(subject.image.url.to_value).to eq('http://sample.com/example-default.jpg')
       expect(subject.image.url(:thumb).to_value).to eq('http://sample.com/example-thumb.jpg')
+
       expect(subject.extract(:hoge).to_value).to eq('sample extract')
-    end
-  end
 
-  describe 'define posts data' do
-    before do
-      collection :post, length: 3
-    end
+      expect(subject.comments.to_value).to eq([comment_node, comment_node])
 
-    xit 'build nodes' do
-      
+      expect(subject.to_value).to eq([comment_node])
     end
   end
 end

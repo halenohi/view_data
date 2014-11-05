@@ -6,7 +6,7 @@ module ViewData
 
     # ex: "application"
     def layout
-      @layout ||= ''#ViewData::Layout.new(@options[:layout].call.identifier.split('/').last)
+      @layout ||= ViewData::Layout.new(@options[:layout].call.identifier.split('/').last)
     end
 
     # ex: "posts/index"

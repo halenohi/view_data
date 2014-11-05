@@ -1,4 +1,6 @@
 class ViewData::Data::Node# < BasicObject
+  attr_accessor :value
+
   def initialize(value: nil, name: '', args: [], nodes: nodes = [])
     @value = value
     @name = name
