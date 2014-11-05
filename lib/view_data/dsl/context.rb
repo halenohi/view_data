@@ -1,56 +1,74 @@
 module ViewData
   class DSL
-    class Context < Struct.new(:data_name)
-      def method_missing(method, *args, &block)
-        values.merge!(method => extract_value(method, args, block))
-        ChainContext.new(self, method)
+    class Context
+      attr_reader :root_node
+
+      def initialize(data_name, data_node)
+        @data_name = data_name
+        @root_node = data_node
       end
 
-      def values
-        @values ||= {}
+      def method_missing(method, *args, &block)
+        args, val = extract(method, args, block)
+        attr(name: method, value: val, args: args, &block)
       end
 
       def sequence(attr)
-        values.merge!(
-          attr => ViewData::DSL::Sequences.find("#{ data_name }:#{ attr }").next
-        )
+        value = Sequences.find("#{ @data_name }:#{ attr }").next
+        root_node.add_node(create_node(value, attr))
       end
 
-      def extract_value(method, args, block = nil)
-        if args.blank? && block.present?
-          InsideContext.new(self).instance_eval(&block)
-        elsif args.any? && block.present?
-          target_value = values[method]
-          if target_value.is_a?(MultipleValue)
-            target_value.add(args.first, block)
-          else
-            MultipleValue.new(target_value, args.first, block)
-          end
-        elsif args.any?
-          args.first
+      def extract(method, args, block = nil)
+        if block.present?
+          [args, InsideContext.new(self).instance_eval(&block)]
+        elsif args.any? && !block.present?
+          [[], args.first]
+        else
+          [[], nil]
         end
       end
-    end
 
-    class InsideContext < Struct.new(:parent)
-      def method_missing(method, *args)
-        parent.values[method]
+      def create_node(value = nil, name = '', args = [], nodes = [])
+        Data::Node.new(value: value, name: name, args: args, nodes: nodes)
+      end
+
+      def extract_and_create_node(method, args, block)
+        args, val = extract(method, args, block)
+        create_node(val, method, args)
+      end
+
+      def attr(name: '', value: nil, args: [], &block)
+        exist_node = root_node.find_node(name, args)
+        if exist_node.present?
+          node = exist_node
+        else
+          node = create_node(value, name, args)
+          root_node.add_node(node)
+        end
+        ChainContext.new(self, node)
       end
     end
 
-    class ChainContext < Struct.new(:parent, :before_method)
+    class InsideContext < BasicObject
+      def initialize(parent_context)
+        @parent_context = parent_context
+      end
+
       def method_missing(method, *args, &block)
-        value[before_method][method] = parent.extract_value(method, args, block)
-        parent.values.merge!(value)
-      end
-
-      def value
-        @value ||= { before_method => {} }
+        @parent_context.root_node.send(method, *args, &block)
       end
     end
 
-    class MultipleValue
-      def initailize(base_value, key, block)
+    class ChainContext < BasicObject
+      def initialize(parent_context, parent_node)
+        @parent_context = parent_context
+        @parent_node = parent_node
+      end
+
+      def method_missing(method, *args, &block)
+        node = @parent_context.extract_and_create_node(method, args, block)
+        @parent_node.add_node(node)
+        ChainContext.new(@parent_context, node)
       end
     end
   end

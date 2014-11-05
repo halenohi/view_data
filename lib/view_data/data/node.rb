@@ -1,36 +1,35 @@
-module ViewData::Data::Node
-  STRUCT_NAME = :__view_data_struct
-
-  class << self
-    def create_node(val, name, args)
-      val.extend(Delegate)
-      val.send "#{ STRUCT_NAME }=", {
-        name: name,
-        args: args,
-        nodes: []
-      }
-      val
-    end
-
-    def add_node(node, *children)
-      node.send(STRUCT_NAME)[:nodes] += children
-    end
-
-    def get_nodes(node)
-      node.send(STRUCT_NAME)[:nodes]
-    end
+class ViewData::Data::Node# < BasicObject
+  def initialize(value: nil, name: '', args: [], nodes: nodes = [])
+    @value = value
+    @name = name
+    @args = args
+    @nodes = nodes
   end
 
-  module Delegate
-    attr_accessor STRUCT_NAME
+  def to_s
+    @value.to_s
+  end
 
-    def method_missing(method, *args, &block)
-      node = send(STRUCT_NAME)[:nodes].select{ |node|
-        struct = node.send(STRUCT_NAME)
-        struct[:name] == method && struct[:args] == args
-      }.first
+  def to_value
+    @value
+  end
 
-      node.presence || super
-    end
+  def is_called?(name, args)
+    @name == name && @args == args
+  end
+
+  def add_node(*children)
+    @nodes += children
+  end
+
+  def method_missing(method, *args, &block)
+    node = find_node(method, args)
+    node || @value.send(method, *args, &block)
+  end
+
+  def find_node(method, args)
+    @nodes.detect{ |node|
+      node.is_called?(method, args)
+    }
   end
 end

@@ -6,7 +6,7 @@ module ViewData
 
     # ex: "application"
     def layout
-      @layout ||= ViewData::Layout.new(@options[:layout].call.identifier.split('/').last)
+      @layout ||= ''#ViewData::Layout.new(@options[:layout].call.identifier.split('/').last)
     end
 
     # ex: "posts/index"
@@ -16,7 +16,7 @@ module ViewData
 
     def exist_prefixes
       @exist_prefixes ||= @options[:prefixes].select{ |prefix|
-        path = Rails.root.join('app/views', _template(prefix)).to_s + '.*'
+        path = ::Rails.root.join('app/views', _template(prefix)).to_s + '.*'
         Dir.glob(path).any?
       }
     end
