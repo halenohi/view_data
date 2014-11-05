@@ -1,4 +1,4 @@
-class ViewData::Data::Node# < BasicObject
+class ViewData::Data::Node
   attr_accessor :value
 
   def initialize(value: nil, name: '', args: [], nodes: nodes = [])
