@@ -1,2 +1,20 @@
 <h1>posts#index</h1>
-<p><%= @posts.to_s %></p>
+<ul>
+  <% @posts.each do |post| %>
+    <li>
+      <p><%= post.title %></p>
+      <p><%= post.created_at %></p>
+      <p><%= post.posted_at %></p>
+      <p><%= post.image.url %></p>
+      <p><%= post.image.url(:thumb) %></p>
+      <p>
+        <% post.comments.each do |comment| %>
+          <%= comment.body %>
+          by
+          <%= comment.user.name %>
+          <br>
+        <% end %>
+      </p>
+    </li>
+  <% end %>
+</ul>

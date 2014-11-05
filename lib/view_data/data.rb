@@ -1,12 +1,9 @@
 module ViewData
   class Data
     class << self
-      def find(layout_or_template)
-        case layout_or_template
-        when ViewData::Layout
-          
-        when ViewData::Template
-          
+      def load_data(layout_or_template)
+        layout_or_template.data_files.each do |data_file|
+          load data_file if ::File.exists?(data_file)
         end
       end
     end

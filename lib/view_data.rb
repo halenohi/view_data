@@ -13,16 +13,16 @@ require 'view_data/dsl/sequences'
 
 require 'view_data/file'
 require 'view_data/layout'
+require 'view_data/partial'
 require 'view_data/render_options'
 require 'view_data/template'
 
 module ViewData
   class << self
     def inject(render_options, view_data)
-      layout_data = ViewData::Data.find(render_options.layout)
-      template_data = ViewData::Data.find(render_options.template)
-      view_data.merge!(layout_data || {})
-      view_data.merge!(template_data || {})
+      ViewData::Data.load_data(render_options.layout)
+      ViewData::Data.load_data(render_options.template)
+      view_data.merge!(ViewData.to_assigns)
       view_data
     end
 
@@ -34,6 +34,13 @@ module ViewData
 
     def data_nodes
       @data_nodes ||= {}
+    end
+
+    def to_assigns
+      data_nodes.inject({}){ |res, (k, v)|
+        res[k.split(':').last] = v
+        res
+      }
     end
   end
 end

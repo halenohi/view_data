@@ -10,7 +10,7 @@ module AbstractController
     alias render view_data_render
 
     def inject_view_assigns
-      ViewData::Injecter.inject(@_render_options, original_view_assigns)
+      ViewData.inject(@_render_options, original_view_assigns)
     end
 
     alias original_view_assigns view_assigns

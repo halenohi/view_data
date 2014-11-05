@@ -5,6 +5,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'quiet_assets'
   gem 'tapp'
+  gem 'better_errors'
+  gem 'binding_of_caller'
 end
 
 # Declare your gem's dependencies in view_data.gemspec.
