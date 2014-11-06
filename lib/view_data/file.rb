@@ -10,7 +10,11 @@ module ViewData
     end
 
     def data_paths
-      ['app/view_data'].map{ |path| ::Rails.root.join(path) }
+      ['app/view_data'].map{ |path| rails_root.join(path) }
+    end
+
+    def rails_root
+      (::Rails.root || ViewData.root)
     end
   end
 end

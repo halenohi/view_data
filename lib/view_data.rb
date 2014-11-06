@@ -42,5 +42,9 @@ module ViewData
         res
       }
     end
+
+    def root
+      Pathname.new(File.dirname(File.dirname(__FILE__)))
+    end
   end
 end
