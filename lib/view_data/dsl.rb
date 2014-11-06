@@ -1,15 +1,20 @@
 class ViewData::DSL
-  def data(name, nodes = [], &block)
+  def data(name, nodes = [], options = {}, &block)
+    if nodes.is_a?(Hash) && options.keys.length.zero?
+      options = nodes
+    end
+    options = { disable: false }.merge(options)
+    return if options[:disable]
+
     data_node = ViewData::Data::Node.new(name: name)
     if block_given?
       context = ViewData::DSL::Context.new(name, data_node, self)
       context.instance_eval(&block)
     end
     unless nodes.length.zero?
-      data_node.add_node(*nodes)
+      data_node.add_value(nodes)
     end
-    _caller = caller[0]
-    data_nodes[data_node_name(name, _caller)] = data_node
+    data_nodes[data_node_name(name, caller[0])] = data_node
   end
 
   def data_nodes
