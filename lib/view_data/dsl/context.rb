@@ -49,7 +49,7 @@ class ViewData::DSL::Context
 
   def collection(name, options = {})
     nodes = get_collection(name, options)
-    root_node.add_value(nodes)
+    root_node.add_values(nodes)
   end
 
   def get_collection(name, options = {})

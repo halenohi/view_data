@@ -7,13 +7,20 @@ class ViewData::DSL
     return if options[:disable]
 
     data_node = ViewData::Data::Node.new(name: name)
+
     if block_given?
       context = ViewData::DSL::Context.new(name, data_node, self)
       context.instance_eval(&block)
     end
-    unless nodes.length.zero?
-      data_node.add_value(nodes)
+
+    unless nodes.is_a?(Array) && nodes.length.zero?
+      data_node.add_values(nodes)
     end
+
+    if nodes.is_a?(String)
+      data_node.add_value(collection(nodes).first)
+    end
+
     data_nodes[data_node_name(name, caller[0])] = data_node
   end
 

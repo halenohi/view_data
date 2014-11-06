@@ -24,9 +24,13 @@ class ViewData::Data::Node
     @nodes += children
   end
 
-  def add_value(val_or_vals)
+  def add_values(val_or_vals)
     @value ||= []
     @value += (val_or_vals.is_a?(Array) ? val_or_vals : [val_or_vals])
+  end
+
+  def add_value(val)
+    @value = val
   end
 
   def method_missing(method, *args, &block)
