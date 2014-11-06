@@ -1,5 +1,5 @@
 class ViewData::Data::Node
-  attr_accessor :value
+  attr_reader :value
 
   def initialize(value: nil, name: '', args: [], nodes: nodes = [])
     @value = value
@@ -22,6 +22,11 @@ class ViewData::Data::Node
 
   def add_node(*children)
     @nodes += children
+  end
+
+  def add_value(val_or_vals)
+    @value ||= []
+    @value += (val_or_vals.is_a?(Array) ? val_or_vals : [val_or_vals])
   end
 
   def method_missing(method, *args, &block)
