@@ -1,5 +1,7 @@
 ViewData.define do
-  data :posts, disable: true do
-    collection('post', length: 3)
+  data :posts do
+    collection(:post)
+    collection('posts/post:long_title')
+    collection(:post)
   end
 end
